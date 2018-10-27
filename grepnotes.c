@@ -2,8 +2,11 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 GREP PROBLEM STATEMENT
-Implement these options:  -r  -i  -v  -f  -w  -c  -m  -b -q  -H  -h  -e patterns 
-Also Need to Submit: A file with tested commands - one per line. File named as test.txt
+
+Implement these options:  -r  -i  -v  -f  -w  -c  -m  -b -q  -H  -h  -e.
+Additional option (more difficult), expected to be done: handling regular expressions in grep.
+Also Need to Submit: A file with tested commands - one per linne. File named as test.txt
+
 
 On Writing a test-suite
 * Some projects (FILE * library, malloc and free library, etc. ) require writing a test suite. It is mentioned against those projects which require a test-suite. Typically it is required for libraries. 
@@ -11,11 +14,10 @@ On Writing a test-suite
 * You are supposed to write an extensive test-suite for testin your code. 
 * You will also be judged on the quality of the test-suite. 
 
-Tips to those implementing unix commands
-* Useful C library functions:  getopt(for handling command line options), opendir(opening a directory),  readdir(reading a directory), stat(), chmod(), chown(),  mkdir(),  tmpnam(), tmpfile()
-* Pay special attention to design of a data structure for storing the data. For example n-way tree, stack, stack of strings, array of strings, etc. 
-* Pay special attention to design of how to combine various options together. Normally if you don't do this in the begining, your code will become very complex.
 
+* Useful C library functions:  getopt(for handling command line options), opendir(opening a directory),  readdir(reading a directory), stat(), chmod(), chown(),  mkdir(),  tmpnam(), tmpfile()
+* Pay special attention to design of a data structure for storing the data. For example n-way tree, stack, stack of strings, array of strings, etc.
+* Pay special attention to design of how to combine various options together. Normally if you don't do this in the begining, your code will become very complex.
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
