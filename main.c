@@ -4,7 +4,7 @@ int fileopen(FILE *fp, char *filename, char *mode);
 
 int main(int argc, char *argv[]) {
 	//declarations
-	FILE *patternfile, *fp;`
+	FILE *patternfile, *fp;
 	char search[MAXSEARCH], filename[MAXSEARCH];
 	int count = 0;
 
