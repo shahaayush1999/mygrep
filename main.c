@@ -17,7 +17,6 @@
 #define EXOR(a, b) (((a) && !(b)) || (!(a) && (b)))
 #define MAXSEARCH 32
 
-
 //LOGGING SYSTEM TO ENABLE AND DISABLE DEBUGPRINT.#if 1 to enable, #if 0 to disable debugprint
 #if 0
 	#define DEB(a) printf a
@@ -90,7 +89,7 @@ int main(int argc, char *argv[]) {
 			if(EXOR(strstr(line, search), flag.v)) {//modify for case sensitive flag
 				DEB(("Debug: Byteoffset recd = %ld\n", byteoffset));
 				DEB(("2Debug: Should be printing filename, f.H=%d, strcmp=%d, f.q=%d\n", flag.H, strcmp(filename, "stdin"), flag.q));
-				if(flag.H && (strcmp(filename, "stdin") != 0) && (flag.q != 0))//printing filename
+				if(flag.H && (strcmp(filename, "stdin") != 0) && (flag.q != 1) && (flag.c != 1))//printing filename
 					printf("%s:", filename);
 				if(flag.q)//quit if match + flag.q set
 					return FOUND;
