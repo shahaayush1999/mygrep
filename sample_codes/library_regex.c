@@ -69,23 +69,8 @@ int main(int argc, char *argv[])
 		printf("\n %s match at %d", offset ? "next" : "first", offset+pm.rm_so);
 		offset += pm.rm_eo;
 		cnt++;
-		a = regexec(&re, &str[0] + offset, 1, &pm, 0);
+		a = regexec(&re, &str[0] + offset, 1, &pm, REG_NOTBOL);
 	}
-    /*a = regexec(&re, &str[0], 1, &pm, REG_EXTENDED);    
-    printf("\n first match at %d",pm.rm_eo);        
-
-    int cnt = 0;
-
-    while(a==0)
-    {
-        a = regexec(&re, &str[0] + pm.rm_eo, 1, &pm, 0);
-
-        printf("\n next match %d",pm.rm_eo);        
-
-        cnt++;        
-        if(cnt>6)break;
-    }
-	*/
 	getchar();
     return EXIT_SUCCESS;
 }
