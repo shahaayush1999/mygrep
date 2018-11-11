@@ -1,28 +1,53 @@
-#include "incdef.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <errno.h>
+#include <dirent.h>
+#include <sys/types.h>
+#include <regex.h>
 
-int fileopen(FILE *fp, char *filename, char *mode);
+#include "flags.h"
+#include "myadt.h"
+#include "queue.h"
+
+#define EXOR(a, b) (((a) && !(b)) || (!(a) && (b)))
+#define MAXSEARCH 32
+
+#define CHECKFAILURE if(flag.exit) return USAGEERR;
+
+//return values of grep
+#define FOUND 0
+#define NOTFOUND 1
+#define FILEERR 2
+#define USAGEERR 3
 
 int main(int argc, char *argv[]) {
 	//declarations
 	FILE *patternfile, *fp;
-	char search[MAXSEARCH], filename[MAXSEARCH];
+	char search[MAXSEARCH], *filename;
 	int count = 0;
+	long byteoffset = 0;
+	queue filequeue;
+	qinit(filequeue);
 
 	//optioncheck	
-	optionprint(argc, argv);
+	//optionprint(argc, argv);
 	
 	//initialize flags
 	flaginit();
-	
 	//fetch options
 	flagset(argc, argv);//read options
 	
+	CHECKFAILURE
+
 	//printstatus
 	flagstatus();
-	optionprint(argc, argv);
 
-	//To open files using fileopen
-	//make filequeue
+	//To open files using fopen
 	//if searchfile if present, add searchfile to queue
 	//If rescursive is specified, add files to queue(fifo) using appropriate code
 	//if not recursive, add stdin to queue
@@ -32,30 +57,39 @@ int main(int argc, char *argv[]) {
 	//make list for patternfile
 	//open patternfile if present
 
-	
-	if(flag.e)//IMPLEMENT REGEX HERE
-		strcpy(search, flage_arg());
+
+	/*if(flag.e)//IMPLEMENT REGEX HERE
+		strcpy(search, flage_arg());*/
 	
 	
 
-	SEARCH ALGORITHM:
+	//SEARCH ALGORITHM:
 
 	while(!isempty(filequeue)) {
-		if file is stdin, dont open but operate using stdin
-		open file with appropriate file pointer
-		if fileopen failed, return FILEERR;
-		print file path if flag.H and isnt stdin and !flag.q
-		while(!feof(filename)) {
+		filename = pop(filequeue);
+		if(strcmp(filename, "stdin")) 
+			;//dont open but operate using stdin
+		else {
+			fp = fopen(filename, "r")
+			if(fp == NULL)
+				return FILEERR;
+		}
+		print file path from ./ if flag.H and isnt stdin and !flag.q
+		while(!feof(fp)) {
+			byteoffset = ftell(fp)//insert fseek to get current byte offset of line
 			fgets();
 			if(EXOR(strstr(temp, pat), flag.v)) {//modify for case sensitive flag
-				return FOUND if flag.q is set
-				print byte offset if required
+				if(flag.q)
+					return FOUND;
+				if(flag.b)
+					printf("%ld", byteoffset);
 				++count;
 				if(!flag.c)
 					printf("%s", temp);
 			}
 			exit if flag.m is specified AND count == nummatch
 		}
+		free(filename);
 	}
 
 	if(flag.c && !flag.q)
@@ -65,15 +99,6 @@ int main(int argc, char *argv[]) {
 	fclose(patternfile);
 	if count > 0
 		return FOUND;
-	return NOTFOUND;
-}
 
-//fopen + err check
-int fileopen(FILE *fp, char *filename, char *mode) {
-	fp = fopen(flagf_arg, "r");
-	if(fp == NULL) {
-		fprintf(stderr, "Failed to open file\n");
-		return 1;
-	}
-	return 0;
+	return NOTFOUND;
 }

@@ -23,10 +23,10 @@ void enqueue(queue *q, char *name) {
 }
 
 char *dequeue(queue *q) {
-	char name[64];
+	char *name;
 	qnode *temp2;
 	q->c--;
-	strcpy(name, q->tail->name);
+	name = q->tail->name;
 	temp2 = q->tail;
 	if(q->tail == q->head) {
 		q->tail = NULL;
@@ -35,7 +35,6 @@ char *dequeue(queue *q) {
 		q->tail = q->tail->prev;
 		q->tail->next = NULL;
 	}
-	free(temp2->name);
 	free(temp2);
 	return name;
 }

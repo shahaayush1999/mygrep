@@ -1,27 +1,34 @@
 struct flags {
+	
+	//FLAGS
+
+	int exit;//check for critical failures. Exit in main if failure is set, using a macro
 	int r;// -r search through all directories
 	int i;// -i ignore upper/lower case
 	int v;// -v print all non-matching lines
 	int f;// -f FILE open FILE and extract 1 pattern per line to be searched
-	char f_arg[30];
 	int w;// -w lines with whole words (letters, digits and underscores NOT okay)
 	int c;// -c suppress line print, only print count of matches
 	int m;// -m NUM stop reading a file after NUM matches, GET MORE INFO HERE!
-	int m_arg;
 	int b;// -b print the 0 based byte offset before each line of output
 	int q;// -q dont print anything, exit immediately even if match or error
 	int H;// -H print filename before each match, default on if more than one file to be scanned
 	int h;// -h dont print filename, default if only one file to be scanned
 	int e;// -e PATTERN use PATTERN as pattern, GET MORE INFO HERE
+	int searchfile;//check if searchfile is supplied
+	int exp;//check if expression is supplied loose
+	
+	//FLAG ARGS
+
+	int m_arg;
 	char e_arg[30];
-	int patternfile;//check if patternfile is supplied or not
-	char patternfile_arg[30];//patternfile name
-	int searchfile[30];//check if searchfile is supplied
+	char f_arg[30];
+	char exp_arg[30];//search expression
 	char searchfile_arg[30];//file to be searched
-	char expression[30];//search expression
 } flag;
 
 void flaginit() {
+	flag.exit = 0;
 	flag.r = 0;
 	flag.i = 0;
 	flag.v = 0;
@@ -34,8 +41,8 @@ void flaginit() {
 	flag.H = 1;
 	flag.h = 0;
 	flag.e = 0;//needs pattern
-	flag.patternfile = 0;//needs filename
 	flag.searchfile = 0;//needs filename
+	flag.exp = 0;
 }
 
 char *flagf_arg() {
@@ -47,17 +54,15 @@ char *flage_arg() {
 int flagm_arg() {
 	return flag.m_arg;
 }
-char *flagpatternfile_arg() {
-	return flag.patternfile_arg;
-}
 char *flagsearchfile_arg() {
 	return flag.searchfile_arg;
 }
-char *flagexpression() {
-	return flag.expression;
+char *flagexp_arg() {
+	return flag.exp_arg;
 }
 
 void flagstatus() {
+	printf("\nflag.exit = %d\n", flag.exit);
 	printf("flag.r = %d\n", flag.r);
 	printf("flag.i = %d\n", flag.i);
 	printf("flag.v = %d\n", flag.v);
@@ -70,14 +75,14 @@ void flagstatus() {
 	printf("flag.H = %d\n", flag.H);
 	printf("flag.h = %d\n", flag.h);
 	printf("flag.e = %d\n", flag.e);
-	printf("flag.patternfile = %d\n", flag.patternfile);
-	printf("flag.searchfile = %d\n", flag.searchfile);
+	printf("flag.exp = %d\n", flag.exp);
+	printf("flag.searchfile = %d\n\n", flag.searchfile);
 }
 
 void flagset (int argc, char *argv[]) {
 	int opt;
 	if(argc == 1) {
-		fprintf(stderr, "Check usage of MyGrep\n");
+		fprintf(stderr, "Usage: grep [OPTION]... PATTERN [FILE]...\nTry 'grep --help' for more information.\n");
 		return;
 	}
 	while ((opt = getopt(argc, argv, "rivf:wcm:bqHhe:")) != -1) {
@@ -97,7 +102,7 @@ void flagset (int argc, char *argv[]) {
 			case 'f'://filename mentioned
 				flag.f = 1;
 				strcpy(flag.f_arg, optarg);
-				printf("Filename = %s\n", flag.f_arg);
+				printf("Pattern filename = %s\n", flag.f_arg);
 				break;
 			case 'w'://whole words only
 				flag.w = 1;
@@ -130,38 +135,54 @@ void flagset (int argc, char *argv[]) {
 				printf("Inputstring = %s\n", flag.e_arg);
 				break;
 			default: /* '?' */
-				fprintf(stderr, "Check Usage in documentation\n");
+				fprintf(stderr, "Usage: grep [OPTION]... PATTERN [FILE]...\nTry 'grep --help' for more information.\n");
 				exit(EXIT_FAILURE);
 		}
 		//printf("%c found\n", (char)opt);
 	}
+
+	printf("Optind = %d\n", optind);
+
 	if(!flag.e) {
 		//check if argv[optind] doesnt exist. if true, print error
-		if(optind == argc) {
-			fprintf(stderr, "Pattern not entered\n");
+		if(optind >= argc) {
+			fprintf(stderr, "Usage: grep [OPTION]... PATTERN [FILE]...\nTry 'grep --help' for more information.\n");
+			optind--;
+			flag.exit = 1;
 		}
 		//else feed argv in search term
 		else {
-			strcpy(flag.expression, argv[optind]);
+			flag.exp = 1;
+			strcpy(flag.exp_arg, argv[optind]);
+			printf("Search expression = %s\n", flag.exp_arg);
 		}
 	}
 
 	optind++;
 
+	printf("Optind = %d\n", optind);
+
 	if(!flag.r) {
-		//check if argv[optind] doesnt exist. if true, keep stdin as input
-		if(optind == argc)
+		if(optind >= argc) {
 			flag.searchfile = 0;
+			//ENTER CODE FOR SETTING TO STDIN
+			printf("Searchfile not entered. Searching in stdin\n");
+		}
 		else {
 			flag.searchfile = 1;
 			strcpy(flag.searchfile_arg, argv[optind]);
+			printf("Searchfile = %s\n", flag.searchfile_arg);
 		}
-		// else feed argv[optind] in file to be searched
 	}
 
-	optind++;
+	if(flag.r && flag.searchfile) {
+		flag.r = 0;
+	}
+	if(flag.e && flag.exp) {
+		flag.exp = 0;
+	}
 
-	if(optind >= argc) {	
+	if(optind > argc) {	
                fprintf(stderr, "Expected argument after options\n");
 	}
 
@@ -171,4 +192,5 @@ void optionprint(int argc, char *argv[]) {
 	int n;
 	for(n = 0; n < argc; n++)
 		printf("CMD arg %d : %s\n", n, argv[n]);
+	printf("\n");
 }

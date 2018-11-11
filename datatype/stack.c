@@ -29,20 +29,18 @@ void push(stack *s, char *name) {
 	}
 }
 
-int pop(stack *s) {
-	char ret[64];
+char *pop(stack *s) {
+	char *ret;
 	node *temp = *s;
 	if((*s)->next == NULL) {
-		strcpy(ret, (*s)->name);;
-		free((*s)->name)
+		ret = (*s)->name;
 		free(*s);
 		*s = NULL;
 	}
 	else {
 		while(temp->next->next)
 			temp = temp->next;
-		strcpy(ret, temp->next->name);
-		free(temp->name)
+		ret = temp->next->name;
 		free(temp->next);
 		temp->next = NULL;
 	}
