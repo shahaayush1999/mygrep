@@ -1,7 +1,5 @@
 struct flags {
-	
 	//FLAGS
-
 	int exit;//check for critical failures. Exit in main if failure is set, using a macro
 	int r;// -r search through all directories
 	int i;// -i ignore upper/lower case
@@ -19,7 +17,6 @@ struct flags {
 	int exp;//check if expression is supplied loose
 	
 	//FLAG ARGS
-
 	int m_arg;
 	char e_arg[30];
 	char f_arg[30];
@@ -102,7 +99,7 @@ void flagset (int argc, char *argv[]) {
 			case 'f'://filename mentioned
 				flag.f = 1;
 				strcpy(flag.f_arg, optarg);
-				printf("Pattern filename = %s\n", flag.f_arg);
+				//printf("Pattern filename = %s\n", flag.f_arg);
 				break;
 			case 'w'://whole words only
 				flag.w = 1;
@@ -113,7 +110,7 @@ void flagset (int argc, char *argv[]) {
 			case 'm'://stop reading file after num matches
 				flag.m = 1;
 				flag.m_arg = atoi(optarg);
-				printf("Nummatches = %d\n", flag.m_arg);
+				//printf("Nummatches = %d\n", flag.m_arg);
 				break;
 			case 'b'://print byte offset
 				flag.b = 1;
@@ -132,7 +129,7 @@ void flagset (int argc, char *argv[]) {
 			case 'e'://use pattern as search pattern
 				flag.e = 1;
 				strcpy(flag.e_arg, optarg);
-				printf("Inputstring = %s\n", flag.e_arg);
+				//printf("Inputstring = %s\n", flag.e_arg);
 				break;
 			default: /* '?' */
 				fprintf(stderr, "Usage: grep [OPTION]... PATTERN [FILE]...\nTry 'grep --help' for more information.\n");
@@ -141,7 +138,7 @@ void flagset (int argc, char *argv[]) {
 		//printf("%c found\n", (char)opt);
 	}
 
-	printf("Optind = %d\n", optind);
+	//printf("Optind = %d\n", optind);
 
 	if(!flag.e) {
 		//check if argv[optind] doesnt exist. if true, print error
@@ -154,13 +151,13 @@ void flagset (int argc, char *argv[]) {
 		else {
 			flag.exp = 1;
 			strcpy(flag.exp_arg, argv[optind]);
-			printf("Search expression = %s\n", flag.exp_arg);
+			//printf("Search expression = %s\n", flag.exp_arg);
 		}
 	}
 
 	optind++;
 
-	printf("Optind = %d\n", optind);
+	//printf("Optind = %d\n", optind);
 
 	if(!flag.r) {
 		if(optind >= argc) {
@@ -171,7 +168,7 @@ void flagset (int argc, char *argv[]) {
 		else {
 			flag.searchfile = 1;
 			strcpy(flag.searchfile_arg, argv[optind]);
-			printf("Searchfile = %s\n", flag.searchfile_arg);
+			//printf("Searchfile = %s\n", flag.searchfile_arg);
 		}
 	}
 
@@ -181,7 +178,8 @@ void flagset (int argc, char *argv[]) {
 	if(flag.e && flag.exp) {
 		flag.exp = 0;
 	}
-
+	if(flag.searchfile)
+		flag.H = 0;
 	if(optind > argc) {	
                fprintf(stderr, "Expected argument after options\n");
 	}

@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
     }
 
     a = regexec(&re, &str[0], 1, &pm, 0);
-	while(a==0) {
+	while(a == 0) {
 		printf("\n %s match at %d", offset ? "next" : "first", offset+pm.rm_so);
 		offset += pm.rm_eo;
 		cnt++;
