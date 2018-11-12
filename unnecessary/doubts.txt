@@ -1,3 +1,0 @@
-How can mygrep accept piped data from o/p of another function?
-Usage of grep? - Is the first non-option argument treated as the search string and the second as the file to be searched? or logic is something different?
-how are multiple options accepted as -cHre (instead of -c -H -r -e) etc?
