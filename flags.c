@@ -20,7 +20,7 @@ void flaginit() {
 	flag.h = 0;
 	flag.e = 0;//needs pattern
 	flag.searchfile = 0;//needs filename
-	flag.exp = 0;
+	flag.exp = 0;//needs filename
 }
 
 char *flagf_arg() {

@@ -17,6 +17,7 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <regex.h>
+#include <ctype.h>
 
 #include "flags.h"
 #include "queue.h"
@@ -31,6 +32,7 @@
 #define NOTFOUND 1
 #define FILEERR 2
 #define USAGEERR 3
+int is_text(char *filename);
 
 int readline(FILE *f, char *buffer, size_t len);
 
@@ -108,6 +110,11 @@ int main(int argc, char *argv[]) {
 			continue;
 		else if(strcmp(filename, "patternfile.txt") == 0)
 			continue;
+		/*else if((is_text(filename) == 0)) {
+			if(!flag.q && flag.r);
+				printf("%s is Binary\n", filename);
+			continue;
+		}*/
 		else {
 			fp = fopen(filename, "r");
 			if(fp == NULL) {
@@ -116,6 +123,10 @@ int main(int argc, char *argv[]) {
 			}
 		}
 		count = 0;
+		if(flag.c && flag.r && !flag.h && !flag.q) {
+			printf("%s:", filename);
+			printffilenameonceifflagc--;
+		}
 		while(!feof(fp)) {
 			byteoffset = ftell(fp);//insert fseek to get current byte offset of line
 			if(fgets(line, 256, fp) == NULL)//if eof, break directly
@@ -131,7 +142,11 @@ int main(int argc, char *argv[]) {
 						return FOUND;
 					if(flag.b && !flag.c)//print byteoffset if flag.b
 						printf("%ld:", byteoffset);
-					++count;
+					if(flag.c && flag.v) {//if flag.c, we need to suppress line printing. Dont bother with flag.q as already handled
+						++count;
+						break;
+					}
+					else;
 					if(!flag.c) {//if flag.c, we need to suppress line printing. Dont bother with flag.q as already handled
 						printf("%s", line);
 						break;
@@ -152,8 +167,7 @@ int main(int argc, char *argv[]) {
 	free(search);
 	free(line);
 	fclose(patternfile);
-	if(!flag.f && flag.exp)
-		remove("./patternfile.txt");
+	remove("./patternfile.txt");
 	if(count > 0)
 		return FOUND;
 
@@ -179,4 +193,20 @@ int readline(FILE *f, char *buffer, size_t len) {
 	}
 
 	return -1; 
+}
+
+int is_text(char *filename) {
+	FILE *f = fopen(filename, "r");
+	if (!f) {
+		perror("fopen failed");
+		return 0;
+	}
+	int c;
+	while ((c=fgetc(f) != EOF))
+		if ((!isascii(c) || iscntrl(c)) && !isspace(c)) {
+			fclose(f);
+			return 0;
+		}
+	return 1;
+	fclose(f);
 }

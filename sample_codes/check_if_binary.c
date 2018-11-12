@@ -1,16 +1,15 @@
-void is_text(char *filename) {
+int is_text(char *filename) {
 	FILE *f = fopen(filename, "r");
 	if (!f) {
 		perror("fopen failed");
 		return;
 	}
 	int c;
-	while ((c=fgetc(c) != EOF)
+	while ((c=fgetc(c) != EOF))
 		if ((!isascii(c) || iscntrl(c)) && !isspace(c)) {
-			printf("is binary\n");
 			fclose(f);
-			return;
+			return 0;
 		}
-	printf("is text\n");
+	return 1;
 	fclose(f);
 }

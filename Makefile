@@ -1,5 +1,5 @@
 try: main.o queue.o stack.o ftw.o flags.o
-	gcc main.o stack.o queue.o flags.o ftw.o -Wall -o mygrep
+	gcc main.o stack.o queue.o flags.o ftw.o -Wall -o grep
 
 ftw.o: ftw.c
 	gcc -c ftw.c -Wall
