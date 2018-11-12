@@ -1,5 +1,5 @@
 try: main.o queue.o stack.o ftw.o flags.o
-	gcc main.o stack.o queue.o flags.o ftw.o -Wall -o grep
+	gcc main.o stack.o queue.o flags.o ftw.o -Wall -o project
 
 ftw.o: ftw.c
 	gcc -c ftw.c -Wall

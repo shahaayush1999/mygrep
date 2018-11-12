@@ -6,6 +6,7 @@
 #endif
 //Statement format is DEB(("Debug: "));
 
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -32,15 +33,16 @@
 #define NOTFOUND 1
 #define FILEERR 2
 #define USAGEERR 3
-int is_text(char *filename);
 
+int is_text(char *filename);
 int readline(FILE *f, char *buffer, size_t len);
+char *strcasestr(const char *haystack, const char *needle);
 
 int main(int argc, char *argv[]) {
 	//declarations
 	FILE *patternfile, *fp;
 	char *search = (char *)malloc(128), *filename, *line = (char *)malloc(256);
-	int count = 0, printffilenameonceifflagc = 1;
+	int count = 0, printffilenameonceifflagc = 1, insensitive;
 	long byteoffset = 0;
 	queue filequeue;
 	qinit(&filequeue);
@@ -48,7 +50,7 @@ int main(int argc, char *argv[]) {
 
 	//initialize flags
 	flaginit();
-
+	insensitive = flag.i;
 
 	//fetch options
 	flagset(argc, argv);//read options
@@ -132,7 +134,15 @@ int main(int argc, char *argv[]) {
 			if(fgets(line, 256, fp) == NULL)//if eof, break directly
 				break;
 			while(readline(patternfile, search, 128) > 0) { //condition to cpy pattern into *search from file line by line and then close and reopen file
-				if(EXOR(strstr(line, search), flag.v)) {//modify for case sensitive flag
+				//if(EXOR(((insensitive == 0)? strstr(line, search) : strcasestr(line, search)), flag.v)) {//modify for case sensitive flag
+				//char *x = ((insensitive == 0)?strstr(line, search) : strcasestr(line, search));
+				char *x;
+				if(insensitive == 0)
+					x = strstr(line, search);
+				else
+					x = strcasestr(line, search);
+				
+				if(EXOR(x, flag.v)) {//modify for case sensitive flag
 					if(flag.H && (strcmp(filename, "stdin") != 0) && (flag.q != 1) && printffilenameonceifflagc) {//printing filename
 						printf("%s:", filename);
 						if(flag.c)
