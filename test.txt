@@ -1,15 +1,16 @@
 ./project hello main.c
-./project -f mypattern main.c
+./project -f mypattern -r
+./project -f mypattern -r -h
 ./project string -r
 ./project string main.c -v
+./project string main.c -v -c
 ./project string -r -m 5
 ./project -e hello -e string main.c
-./project string main.c -H
-./project string main.c -b
+./project -e hello -e string -r
+./project string -r -h
+./project include main.c -b
 ./project string main.c -q
 ./project strisadlka main.c -q
-./project hello main.c -h
-./project include main.c -c
-./project include main.c -c -m 2
-./project string main.c -v -c
-./project string main.c -v -c -m 3
+./project include main.c
+./project string main.c -m 2
+./project string main.c -m 2 -H
