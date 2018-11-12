@@ -59,10 +59,20 @@ void flagstatus() {
 
 void flagset (int argc, char *argv[]) {
 	int opt;
-	if(argc == 1) {
-		fprintf(stderr, "Usage: grep [OPTION]... PATTERN [FILE]...\nTry 'grep --help' for more information.\n");
+	char line[256];
+	FILE *fp = fopen("patternfile.txt", "w");
+	if(fp == NULL) {
+		fprintf(stderr, "File IO error\n");
+		flag.exit = 1;
 		return;
 	}
+
+	if(argc == 1) {
+		fprintf(stderr, "Usage1: grep [OPTION]... PATTERN [FILE]...\nTry 'grep --help' for more information.\n");
+		flag.exit = 1;
+		return;
+	}
+
 	while ((opt = getopt(argc, argv, "rivf:wcm:bqHhe:")) != -1) {
 		switch (opt) {
 			case 'r'://recursive
@@ -80,6 +90,17 @@ void flagset (int argc, char *argv[]) {
 			case 'f'://filename mentioned
 				flag.f = 1;
 				strcpy(flag.f_arg, optarg);
+				FILE *patternfile = fopen(flag.f_arg, "r");
+				if(patternfile == NULL) {
+					fprintf(stderr, "File IO error\n");
+					flag.exit = 1;
+					return;
+				}
+				while(fgets(line, 255, patternfile) != NULL) {
+					fprintf(fp, "%s", line);
+				}
+				fprintf(fp, "\n");
+				fclose(patternfile);
 				//printf("Pattern filename = %s\n", flag.f_arg);
 				break;
 			case 'w'://whole words only
@@ -110,10 +131,11 @@ void flagset (int argc, char *argv[]) {
 			case 'e'://use pattern as search pattern
 				flag.e = 1;
 				strcpy(flag.e_arg, optarg);
+				fprintf(fp, "%s\n", flag.e_arg);
 				//printf("Inputstring = %s\n", flag.e_arg);
 				break;
 			default: /* '?' */
-				fprintf(stderr, "Usage: grep [OPTION]... PATTERN [FILE]...\nTry 'grep --help' for more information.\n");
+				fprintf(stderr, "Usage2: grep [OPTION]... PATTERN [FILE]...\nTry 'grep --help' for more information.\n");
 				exit(EXIT_FAILURE);
 		}
 		//printf("%c found\n", (char)opt);
@@ -121,10 +143,10 @@ void flagset (int argc, char *argv[]) {
 
 	//printf("Optind = %d\n", optind);
 
-	if(!flag.e) {
+	if(!flag.e && !flag.f) {
 		//check if argv[optind] doesnt exist. if true, print error
 		if(optind >= argc) {
-			fprintf(stderr, "Usage: grep [OPTION]... PATTERN [FILE]...\nTry 'grep --help' for more information.\n");
+			fprintf(stderr, "Usage3: grep [OPTION]... PATTERN [FILE]...\nTry 'grep --help' for more information.\n");
 			optind--;
 			flag.exit = 1;
 		}
@@ -132,9 +154,12 @@ void flagset (int argc, char *argv[]) {
 		else {
 			flag.exp = 1;
 			strcpy(flag.exp_arg, argv[optind]);
+			fprintf(fp, "%s\n", flag.exp_arg);
 			//printf("Search expression = %s\n", flag.exp_arg);
 		}
 	}
+	else
+		optind--;
 
 	optind++;
 
@@ -143,7 +168,6 @@ void flagset (int argc, char *argv[]) {
 	if(!flag.r) {
 		if(optind >= argc) {
 			flag.searchfile = 0;
-			//ENTER CODE FOR SETTING TO STDIN
 			printf("Searchfile not entered. Searching in stdin\n");
 		}
 		else {
@@ -152,12 +176,20 @@ void flagset (int argc, char *argv[]) {
 			//printf("Searchfile = %s\n", flag.searchfile_arg);
 		}
 	}
+	
+	fclose(fp);
 
 	if(flag.r && flag.searchfile) {
 		flag.r = 0;
 	}
 	if(flag.e && flag.exp) {
 		flag.exp = 0;
+	}
+	if(!flag.h && !flag.H && !flag.r) {
+		flag.h = 1;
+	}
+	if(!flag.h && !flag.H && flag.r) {
+		flag.H = 1;
 	}
 	if(optind > argc) {	
                fprintf(stderr, "Expected argument after options\n");

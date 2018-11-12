@@ -6,7 +6,7 @@
 -H WORKS
 -h WORKS
 
-to be added with file list
+to be added with patternfile
 -f 
 
 to be fixed with regex
